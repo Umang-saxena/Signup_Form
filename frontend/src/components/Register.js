@@ -5,16 +5,14 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
 
-const RegisterForm = () => {
+const Register = () => {
   const formik = useFormik({
     initialValues: {
-      name: "",
-      email: "",
+      username: "",
       password: "",
     },
     validationSchema: Yup.object({
-      name: Yup.string().required("Name is required"),
-      email: Yup.string().email("Invalid email address").required("Email is required"),
+      username: Yup.string().required("Username is required"),
       password: Yup.string()
         .min(6, "Password must be at least 6 characters")
         .required("Password is required"),
@@ -26,7 +24,7 @@ const RegisterForm = () => {
         setStatus({ success: "User registered successfully!" });
       } catch (error) {
         console.error("❌ Error:", error.response?.data || error.message);
-        setStatus({ error: error.response?.data?.message || "Registration failed!" });
+        setStatus({ error: "Failed to register. Try again!" });
       } finally {
         setSubmitting(false);
       }
@@ -40,35 +38,19 @@ const RegisterForm = () => {
       {formik.status?.error && <Alert variant="danger">{formik.status.error}</Alert>}
 
       <Form onSubmit={formik.handleSubmit}>
-        <Form.Group controlId="name">
-          <Form.Label>Name</Form.Label>
+        <Form.Group controlId="username">
+          <Form.Label>Username</Form.Label>
           <Form.Control
             type="text"
-            name="name"
-            placeholder="Enter your name"
-            value={formik.values.name}
+            name="username"
+            placeholder="Enter username"
+            value={formik.values.username}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
-            isInvalid={formik.touched.name && formik.errors.name}
+            isInvalid={formik.touched.username && formik.errors.username}
           />
           <Form.Control.Feedback type="invalid">
-            {formik.errors.name}
-          </Form.Control.Feedback>
-        </Form.Group>
-
-        <Form.Group controlId="email" className="mt-3">
-          <Form.Label>Email</Form.Label>
-          <Form.Control
-            type="email"
-            name="email"
-            placeholder="Enter your email"
-            value={formik.values.email}
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            isInvalid={formik.touched.email && formik.errors.email}
-          />
-          <Form.Control.Feedback type="invalid">
-            {formik.errors.email}
+            {formik.errors.username}
           </Form.Control.Feedback>
         </Form.Group>
 
@@ -77,7 +59,7 @@ const RegisterForm = () => {
           <Form.Control
             type="password"
             name="password"
-            placeholder="Enter your password"
+            placeholder="Enter password"
             value={formik.values.password}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
@@ -96,4 +78,4 @@ const RegisterForm = () => {
   );
 };
 
-export default RegisterForm;
+export default Register;
