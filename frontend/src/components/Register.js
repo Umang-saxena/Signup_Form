@@ -1,107 +1,81 @@
-
 import 'bootstrap/dist/css/bootstrap.min.css';
-
-
-import React, { useState } from "react";
-import { Formik, Form, Field, ErrorMessage } from "formik";
+import React from "react";
+import { Form, Button, Container, Alert } from "react-bootstrap";
+import { useFormik } from "formik";
 import * as Yup from "yup";
-import { Form as BootstrapForm, Button, Alert } from "react-bootstrap";
 import axios from "axios";
 
-const RegisterForm = () => {
-  const [serverResponse, setServerResponse] = useState(null);
-
-  const initialValues = {
-    username: "",
-    password: "",
-    cv: null,
-  };
-
-  const validationSchema = Yup.object({
-    username: Yup.string()
-      .min(3, "Username must be at least 3 characters")
-      .required("Username is required"),
-    password: Yup.string()
-      .min(6, "Password must be at least 6 characters")
-      .required("Password is required"),
-    cv: Yup.mixed()
-      .required("CV is required")
-      .test("fileFormat", "Only PDF files are allowed", (value) => {
-        return value && value.type === "application/pdf";
-      }),
+const Register = () => {
+  const formik = useFormik({
+    initialValues: {
+      username: "",
+      password: "",
+    },
+    validationSchema: Yup.object({
+      username: Yup.string().required("Username is required"),
+      password: Yup.string()
+        .min(6, "Password must be at least 6 characters")
+        .required("Password is required"),
+    }),
+    onSubmit: async (values, { setSubmitting, setStatus }) => {
+      try {
+        const response = await axios.post("http://localhost:5000/register", values);
+        console.log("✅ Response:", response.data);
+        setStatus({ success: "User registered successfully!" });
+      } catch (error) {
+        console.error("❌ Error:", error.response?.data || error.message);
+        setStatus({ error: "Failed to register. Try again!" });
+      } finally {
+        setSubmitting(false);
+      }
+    },
   });
 
-  const handleSubmit = async (values, { setSubmitting, resetForm }) => {
-    const formData = new FormData();
-    formData.append("username", values.username);
-    formData.append("password", values.password);
-    formData.append("cv", values.cv);
-
-    try {
-      const response = await axios.post("http://localhost:5000/register", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-      setServerResponse({ type: "success", message: response.data.message });
-      resetForm();
-    } catch (error) {
-      setServerResponse({ type: "danger", message: "Error submitting the form" });
-    }
-    setSubmitting(false);
-  };
-
   return (
-    <div className="container mt-5">
+    <Container className="mt-5">
       <h2>Register</h2>
-      {serverResponse && (
-        <Alert variant={serverResponse.type}>{serverResponse.message}</Alert>
-      )}
-      <Formik
-        initialValues={initialValues}
-        validationSchema={validationSchema}
-        onSubmit={handleSubmit}
-      >
-        {({ setFieldValue, isSubmitting }) => (
-          <Form as={BootstrapForm}>
-            <BootstrapForm.Group className="mb-3">
-              <BootstrapForm.Label>Username</BootstrapForm.Label>
-              <Field
-                name="username"
-                type="text"
-                as={BootstrapForm.Control}
-                placeholder="Enter username"
-              />
-              <ErrorMessage name="username" component="div" className="text-danger" />
-            </BootstrapForm.Group>
+      {formik.status?.success && <Alert variant="success">{formik.status.success}</Alert>}
+      {formik.status?.error && <Alert variant="danger">{formik.status.error}</Alert>}
 
-            <BootstrapForm.Group className="mb-3">
-              <BootstrapForm.Label>Password</BootstrapForm.Label>
-              <Field
-                name="password"
-                type="password"
-                as={BootstrapForm.Control}
-                placeholder="Enter password"
-              />
-              <ErrorMessage name="password" component="div" className="text-danger" />
-            </BootstrapForm.Group>
+      <Form onSubmit={formik.handleSubmit}>
+        <Form.Group controlId="username">
+          <Form.Label>Username</Form.Label>
+          <Form.Control
+            type="text"
+            name="username"
+            placeholder="Enter username"
+            value={formik.values.username}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            isInvalid={formik.touched.username && formik.errors.username}
+          />
+          <Form.Control.Feedback type="invalid">
+            {formik.errors.username}
+          </Form.Control.Feedback>
+        </Form.Group>
 
-            <BootstrapForm.Group className="mb-3">
-              <BootstrapForm.Label>Upload CV (PDF only)</BootstrapForm.Label>
-              <input
-                type="file"
-                className="form-control"
-                onChange={(event) => setFieldValue("cv", event.target.files[0])}
-              />
-              <ErrorMessage name="cv" component="div" className="text-danger" />
-            </BootstrapForm.Group>
+        <Form.Group controlId="password" className="mt-3">
+          <Form.Label>Password</Form.Label>
+          <Form.Control
+            type="password"
+            name="password"
+            placeholder="Enter password"
+            value={formik.values.password}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            isInvalid={formik.touched.password && formik.errors.password}
+          />
+          <Form.Control.Feedback type="invalid">
+            {formik.errors.password}
+          </Form.Control.Feedback>
+        </Form.Group>
 
-            <Button variant="primary" type="submit" disabled={isSubmitting}>
-              {isSubmitting ? "Submitting..." : "Register"}
-            </Button>
-          </Form>
-        )}
-      </Formik>
-    </div>
+        <Button type="submit" className="mt-3" disabled={formik.isSubmitting}>
+          {formik.isSubmitting ? "Registering..." : "Register"}
+        </Button>
+      </Form>
+    </Container>
   );
 };
 
-export default RegisterForm;
+export default Register;
