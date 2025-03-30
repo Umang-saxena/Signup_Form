@@ -2,6 +2,8 @@ import express from "express";
 import cors from "cors";
 import mongoose from "mongoose";
 import connectDb from "./connection/connectDB.js";
+import {register,login,admin} from "./controllers/auth-controller.js";
+
 
 const app = express();
 
@@ -21,49 +23,9 @@ const userSchema = new mongoose.Schema({
 const User = mongoose.model("User", userSchema);
 
 // Route to Register User
-app.post("/register", async (req, res) => {
-    try {
-        console.log("✅ Received Body:", req.body);
-
-        const { username, password } = req.body;
-        if (!username || !password) {
-            return res.status(400).json({ message: "Username and password are required!" });
-        }
-
-        // Save to MongoDB
-        const newUser = new User({ username, password });
-        await newUser.save();
-
-        console.log("✅ User Registered:", newUser);
-        res.json({ message: "User registered successfully!", user: newUser });
-    } catch (error) {
-        console.error("❌ Error:", error);
-        res.status(500).json({ message: "Internal Server Error" });
-    }
-});
-
-app.post("/login", async (req, res) => {
-    try {
-        console.log("✅ Received Body:", req.body);
-
-        const { username, password } = req.body;
-        if (!username || !password) {
-            return res.status(400).json({ message: "Username and password are required!" });
-        }
-
-        // Check if user exists
-        const user = await User.findOne({ username, password });
-        if (!user) {
-            return res.status(401).json({ message: "Invalid username or password!" });
-        }
-
-        console.log("✅ User Logged In:", user);
-        res.json({ message: "User logged in successfully!", user });
-    } catch (error) {
-        console.error("❌ Error:", error);
-        res.status(500).json({ message: "Internal Server Error" });
-    }
-});
+app.post("/").get(admin);
+app.post("/register").get(register);
+app.post("/login").get(login);
 
 
 app.listen(5000, () => console.log("🚀 Server running on port 5000"));

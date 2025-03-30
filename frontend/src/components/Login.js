@@ -74,6 +74,9 @@ const Login = () => {
                     {formik.isSubmitting ? "Logging in..." : "Login"}
                 </Button>
             </Form>
+            <div className="mt-3">
+        <p>Don't have an account? <a href="/register">Register</a></p>
+      </div>
         </Container>
     );
 };

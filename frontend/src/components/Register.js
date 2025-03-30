@@ -110,10 +110,15 @@ const Register = () => {
           </Form.Control.Feedback>
         </Form.Group>
 
-        <Button type="submit" className="mt-3" disabled={formik.isSubmitting}>
+        <Button type="submit" className="mt-3" disabled={formik.isSubmitting}>        
+
           {formik.isSubmitting ? "Registering..." : "Register"}
         </Button>
-      </Form>
+      </Form>      
+      <div className="mt-3">
+        <p>Already have an account? <a href="/login">Login</a></p>
+      </div>
+
     </Container>
   );
 };
