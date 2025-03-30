@@ -30,7 +30,8 @@ const Register = () => {
         setStatus({ success: "User registered successfully!" });
       } catch (error) {
         console.error("❌ Error:", error.response?.data || error.message);
-        setStatus({ error: "Failed to register. Try again!" });
+        setStatus({ error: error.response?.data.message || "Failed to register. Try again!" });
+
       } finally {
         setSubmitting(false);
       }
@@ -51,13 +52,15 @@ const Register = () => {
             name="name"
             placeholder="Enter name"
 
-            value={formik.values.username}
+            value={formik.values.name}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
-            isInvalid={formik.touched.username && formik.errors.username}
+            isInvalid={formik.touched.name && formik.errors.name}
+
           />
           <Form.Control.Feedback type="invalid">
-            {formik.errors.username}
+            {formik.errors.name}
+
           </Form.Control.Feedback>
         </Form.Group>
 
