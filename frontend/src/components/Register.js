@@ -17,7 +17,7 @@ const Register = () => {
     validationSchema: Yup.object({
       name: Yup.string().required("Name is required"),
       email: Yup.string().email("Invalid email format").required("Email is required"),
-      mobileNumber: Yup.string().required("Mobile number is required"),
+      mobileNumber: Yup.string().max(10,"Mobile Number can't be more than 10").required("Mobile number is required"),
       password: Yup.string()
         .min(6, "Password must be at least 6 characters")
         .required("Password is required"),
@@ -30,8 +30,7 @@ const Register = () => {
         setStatus({ success: "User registered successfully!" });
       } catch (error) {
         console.error("❌ Error:", error.response?.data || error.message);
-        setStatus({ error: error.response?.data.message || "Failed to register. Try again!" });
-
+        setStatus({ error: "Failed to register. Try again!" });
       } finally {
         setSubmitting(false);
       }

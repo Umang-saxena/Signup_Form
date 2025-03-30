@@ -12,7 +12,7 @@ const User = mongoose.model("User", userSchema);
 
 const register = async (req, res) => {
     try {
-        console.log("✅ Received Body:", req.body);
+        // console.log("✅ Received Body:", req.body);
 
         const { name, email, mobileNumber, password } = req.body;
         if (!name || !email || !mobileNumber || !password) {
@@ -31,7 +31,7 @@ const register = async (req, res) => {
         const newUser = new User({ name, email, mobileNumber, password: hashedPassword });
         await newUser.save();
 
-        console.log("✅ User Registered:", newUser);
+        // console.log("✅ User Registered:", newUser);
         res.json({ message: "User registered successfully!", user: newUser });
     } catch (error) {
         console.error("❌ Error:", error);
