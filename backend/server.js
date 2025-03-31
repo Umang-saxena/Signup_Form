@@ -19,7 +19,7 @@ connectDb();
 
 
 // Route to Register User
-app.get("/admin", admin);
+app.get("/", admin);
 app.post("/register", register);
 app.post("/login", login);
 

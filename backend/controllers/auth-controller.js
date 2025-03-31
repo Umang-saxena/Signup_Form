@@ -21,7 +21,7 @@ const register = async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, 10);
 
         // Save to MongoDB
-        const newUser = new User({ name, email, mobileNumber, password: hashedPassword });
+        const newUser = new User({ name, email, mobileNumber, password: hashedPassword, role: 'user' }); // Assign default role
         await newUser.save();
 
         // console.log("✅ User Registered:", newUser);
@@ -42,7 +42,7 @@ const login = async (req, res) => {
         }
 
         // Check if user exists
-        const user = await User.findOne({ email });
+        const user = await User.findOne({ email }).select('+password'); // Ensure password is included for comparison
         if (!user) {
             return res.status(401).json({ message: "Invalid email or password!" });
         }

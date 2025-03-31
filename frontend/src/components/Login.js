@@ -1,11 +1,22 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
-import React from "react";
+import React, { useEffect } from "react";
 import { Form, Button, Container, Alert } from "react-bootstrap";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
+    const navigate = useNavigate();
+
+    // Check local storage for user info on component mount
+    useEffect(() => {
+        const userInfo = localStorage.getItem("userInfo");
+        if (userInfo) {
+            navigate("/"); // Redirect to Admin page if user info exists
+        }
+    }, [navigate]);
+
     const formik = useFormik({
         initialValues: {
             email: "",
@@ -22,6 +33,16 @@ const Login = () => {
                 const response = await axios.post("http://localhost:5000/login", values);
                 console.log("✅ Response:", response.data);
                 setStatus({ success: "User logged in successfully!" });
+
+                // Save user info in local storage
+                localStorage.setItem("userInfo", JSON.stringify(response.data.user));
+
+                // Check if the user is an admin
+                if (response.data.user ) {
+                    navigate("/"); // Redirect to Admin page
+                } else {
+                    setStatus({ error: "You are not authorized to access the Admin page. Please register." });
+                }
             } catch (error) {
                 console.error("❌ Error:", error.response?.data || error.message);
                 setStatus({ error: "Failed to log in. Try again!" });
