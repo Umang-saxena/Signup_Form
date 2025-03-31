@@ -8,11 +8,11 @@ import axios from "axios";
 const Login = () => {
     const formik = useFormik({
         initialValues: {
-            username: "",
+            email: "",
             password: "",
         },
         validationSchema: Yup.object({
-            username: Yup.string().required("Username is required"),
+            email: Yup.string().email("Invalid email format").required("Email is required"),
             password: Yup.string()
                 .min(6, "Password must be at least 6 characters")
                 .required("Password is required"),
@@ -38,19 +38,19 @@ const Login = () => {
             {formik.status?.error && <Alert variant="danger">{formik.status.error}</Alert>}
 
             <Form onSubmit={formik.handleSubmit}>
-                <Form.Group controlId="username">
-                    <Form.Label>Username</Form.Label>
+                <Form.Group controlId="email">
+                    <Form.Label>Email</Form.Label>
                     <Form.Control
                         type="text"
-                        name="username"
-                        placeholder="Enter username"
-                        value={formik.values.username}
+                        name="email"
+                        placeholder="Enter email"
+                        value={formik.values.email}
                         onChange={formik.handleChange}
                         onBlur={formik.handleBlur}
-                        isInvalid={formik.touched.username && formik.errors.username}
+                        isInvalid={formik.touched.email && formik.errors.email}
                     />
                     <Form.Control.Feedback type="invalid">
-                        {formik.errors.username}
+                        {formik.errors.email}
                     </Form.Control.Feedback>
                 </Form.Group>
 
@@ -75,8 +75,8 @@ const Login = () => {
                 </Button>
             </Form>
             <div className="mt-3">
-        <p>Don't have an account? <a href="/register">Register</a></p>
-      </div>
+                <p>Don't have an account? <a href="/register">Register</a></p>
+            </div>
         </Container>
     );
 };

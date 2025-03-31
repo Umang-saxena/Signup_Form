@@ -1,14 +1,7 @@
 import bcrypt from "bcrypt";
 import mongoose from "mongoose";
 
-const userSchema = new mongoose.Schema({
-    name: String,
-    email: { type: String, unique: true },
-    mobileNumber: String,
-    password: String,
-});
-
-const User = mongoose.model("User", userSchema);
+import { User } from "../models/userSchema.js";
 
 const register = async (req, res) => {
     try {
